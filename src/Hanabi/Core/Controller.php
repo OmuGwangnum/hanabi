@@ -2,6 +2,8 @@
 
 namespace Hanabi\Core;
 
+use Hanabi\Core\AppSmarty;
+
 class Controller
 {
     public function __construct()
@@ -10,7 +12,7 @@ class Controller
 
     public static function fire()
     {
-        $smarty = new Smarty();
+        $smarty = new AppSmarty();
         $smarty->template_dir = 'public';
         $smarty->compile_dir = 'cache';
         $smarty->display('index.html');
