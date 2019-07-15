@@ -4,6 +4,7 @@ namespace Hanabi\Core;
 
 use ReflectionClass;
 use Hanabi\Core\AppSmarty;
+use Zend\Http\PhpEnvironment\Request;
 
 class Controller
 {
@@ -59,11 +60,21 @@ class Controller
         foreach($this->dir as $d) {
             $dir .= '\\' . ucfirst($d);
         }
-        $className = $this->action . $dir;
+        $className = $this->action . $dir . '\\' . ucfirst($this->file);
         if(!class_exists($className))
             return;
 
         $class = new $className;
+        $req = new Request();
+        if($req->isPost()) {
+            foreach($class as $k => $v) {
+                $class->$k = $req->getPost($k);
+            }
+        } else {
+            foreach($class as $k => $v)
+                $class->$k = $req->getQuery($k);
+        }
+        
         if(method_exists($class, $this->func)) {
             $ref = new ReflectionClass($class);
             $method = $ref->getMethod($this->func);
